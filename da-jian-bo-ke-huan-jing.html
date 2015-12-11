@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh_cn" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>搭建博客环境 - 听说读写</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/da-jian-bo-ke-huan-jing.html">
+
+        <meta name="author" content="MuYiFC" />
+        <meta name="keywords" content="Python,Pelican,Publishing" />
+        <meta name="description" content="利用pelican、git搭建个人博客，环境配置，基本操作" />
+
+        <meta property="og:site_name" content="听说读写" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="搭建博客环境"/>
+        <meta property="og:url" content="/da-jian-bo-ke-huan-jing.html"/>
+        <meta property="og:description" content="利用pelican、git搭建个人博客，环境配置，基本操作"/>
+        <meta property="article:published_time" content="2015-12-10" />
+            <meta property="article:section" content="Python" />
+            <meta property="article:tag" content="Python" />
+            <meta property="article:tag" content="Pelican" />
+            <meta property="article:tag" content="Publishing" />
+            <meta property="article:author" content="MuYiFC" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/friendly.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+听说读写            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li class="active">
+                            <a href="/category/python.html">Python</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<style>
+	#banner{
+	    background-image:url("/theme/images/banner.jpg");
+	}
+</style>
+
+<div id="banner">
+	<div class="container">
+		<!-- <div class="copy">
+			<h1>听说读写</h1>
+		</div> -->
+	</div>
+</div><!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/da-jian-bo-ke-huan-jing.html"
+                       rel="bookmark"
+                       title="Permalink to 搭建博客环境">
+                        搭建博客环境
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-12-10T10:32:00+08:00"> 2015-12-10(星期四) 10:32</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/python.html">Python</a>
+        /
+	<a href="/tag/pelican.html">Pelican</a>
+        /
+	<a href="/tag/publishing.html">Publishing</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <h3>搭建环境</h3>
+<div class="highlight"><pre>    <span class="c">#下载python3、pip3</span>
+    <span class="c">#创建blog的虚拟环境</span>
+    mkdir git_blog
+    <span class="nb">cd </span>git_blog
+    virtualenv --no-site-packages venv
+    <span class="c">#进入虚拟环境</span>
+    <span class="nb">source </span>venv/bin/activate
+    python3 install pelican
+    python3 install markdown
+    <span class="c">#创建pelican的框架，根据提示操作，后面也可以在生成的 pelicanconf.py 文件中修改</span>
+    pelican-quickstart
+    <span class="c">#创建的项目结构注释</span>
+    git_blog/
+    <span class="p">|</span>-- content                         <span class="c">#写好的Markdown格式的博文</span>
+    <span class="p">|</span>     └-- <span class="o">(</span>pages<span class="o">)</span>                  <span class="c">#Markdown格式的静态界面(比如About，同WP的Page)</span>
+    <span class="p">|</span>-- output                           <span class="c">#通过Pelican最终生成的html界面</span>
+    <span class="p">|</span>-- develop_server.sh          <span class="c">#Pelican服务器的脚本</span>
+    <span class="p">|</span>-- fabfile.py                       <span class="c">#生成和上传等自动化操作</span>
+    <span class="p">|</span>-- Makefile                        <span class="c">#make的自动化脚本</span>
+    <span class="p">|</span>-- pelicanconf.py                <span class="c">#主配置文件(测试环境)</span>
+    <span class="p">|</span>-- publishconf.py               <span class="c">#主配置文件的扩展，用于(生产环境)</span>
+</pre></div>
+
+
+<h3>pelicanconf.py 中的常用配置</h3>
+<div class="highlight"><pre>    AUTHOR = u&#39;MuYiFC&#39; #博客作者
+    SITENAME = u&#39;&#39; #博客标题
+    SITESUBTITLE = u&#39;我本微末凡尘，可也心向天空&#39; #博客子标题
+    SITEURL = &#39;&#39; #主页地址
+    DEFAULT_DATE=&#39;fs&#39;#快速获取本地时间作为文章发表时间
+    DEFAULT_DATE_FORMAT = &#39;%Y %B %d %a&#39; #使用“年月日时”的时间显示方式
+    TIMEZONE = &#39;Asia/Shanghai&#39; #默认时区，亚洲上海，其他时区可查看国际标准
+    DEFAULT_LANG = u&#39;zh&#39; #默认语言为中文
+    USE_FOLDER_AS_CATEGORY = True #将**content**下的文件夹作为分类，博主目前测试仅可为md文件的所在目录，不支持子分类
+    PLUGIN_PATH = &quot;D:\Poetic_Being\MyBlog\MyPlugins&quot; #插件路径声明
+    PLUGINS = [&quot;assets&quot;] #插件使用列表
+    THEME = &#39;gum&#39; #使用主题
+</pre></div>
+
+
+<h3>第一篇博文</h3>
+<p>使用markdown写博文，其中需要一些固定的格式，作为博客的索引</p>
+<div class="highlight"><pre>    Title: My super title  #文章标题
+    Date: 2015-12-10 10:50 #文章时间，如果前面设定过可忽略
+    Tags: thats, awesome #文章标签
+    Category: yeah #文章分类
+    Author: MuYiFC #文章作者，缺省为博客作者
+    Summary: Short version for index and feeds #文章概括
+    Slug:post  #如果博文标题冲突时，可以设置该值不同来解决，例如需要相同标题不同版本的博文，默认不用设置
+
+    其他内容就是正文了，按markdown格式写就可以了
+</pre></div>
+
+
+<h3>本机预览</h3>
+<div class="highlight"><pre>    make publish
+    make serve
+</pre></div>
+
+
+<p>之后就可以在 127.0.0.1:8000 预览
+需要停止服务器，可以直接用 CTRL+c 停止进程或是调用</p>
+<div class="highlight"><pre>    ./develop_server.sh stop
+</pre></div>
+
+
+<h3>部分常用的pelican的操作指令</h3>
+<div class="highlight"><pre>    make html              <span class="c">#创建静态界面，将 content 中的文件编译生成到 output 目录中</span>
+    make regenerate     <span class="c">#自动生成静态界面，如果频繁更改，使用该命令可以在修改html后自动生成html，相当于执行 make html</span>
+    make serve             <span class="c">#创建服务器</span>
+    make devserver       <span class="c">#相当于 regenerate+serve</span>
+    make publish           <span class="c">#生成用于发布的html，准备正式发布时使用</span>
+</pre></div>
+
+
+<h3>代码上传</h3>
+<p>提交代码到git，<a href="https://pages.github.com/">官方教程</a></p>
+<div class="highlight"><pre>    <span class="nb">cd </span>git_blog/output/
+    git init
+    <span class="c">#创建没有父节点的分支节点，git默认需要有个 gh-pages 的节点才能生成网页，master 节点不会生效</span>
+    git checkout --orphan gh-pages
+    <span class="c">#拉取远程代码</span>
+    git pull -u origin gh-pages
+    <span class="c">#提交</span>
+    git push -u origin gh-pages
+</pre></div>
+
+
+<p>后续push该目录内的内容即可
+访问<a href="http://muyifc.github.io/blog">项目地址</a>可以在该git项目Settings/GitHub Pages中找到</p>
+<h3>变更主题</h3>
+<div class="highlight"><pre>    <span class="c">#该地址会下载一大部分主题</span>
+    git clone https://github.com/getpelican/pelican-themes.git
+    <span class="c">#加载主题，该命令将指定的主题复制到虚拟库中 /venv/lib/python3.5/site-packages/pelican/themes/&lt;themename&gt;</span>
+    pelican-themes -i pelican-themes/&lt;themename&gt;
+    <span class="c">#修改pelicanconf.py，添加 THEME = &#39;&lt;themename&gt;&#39;，重新生成即可生效</span>
+    <span class="c">#如果要修改主题，需修改 pelican-themes/&lt;themename&gt;/templates 中的对应模板文件，再刷新模板</span>
+    pelican-themes -U pelican-themes/&lt;themename&gt;
+    <span class="c">#删除主题</span>
+    pelican-themes -r &lt;themename&gt;
+</pre></div>
+
+
+<h3>添加评论</h3>
+<p>在<a href="https://disqus.com/admin/signup">Disqus</a>上申请一个站点，记牢Shortname。这个 Shortname 就是你注册的用户名，在pelicanconf.py添加</p>
+<div class="highlight"><pre>    <span class="n">DISQUS_SITENAME</span> <span class="o">=</span> <span class="n">Shortname</span>
+</pre></div>
+
+
+<h3>CC</h3>
+<div class="highlight"><pre>    <span class="c">#添加CC</span>
+    <span class="n">CC_LICENSE</span> <span class="o">=</span> <span class="s">&#39;CC-BY&#39;</span>
+</pre></div>
+
+
+<h3>变更github的域名</h3>
+<div class="highlight"><pre>    #在 output 文件夹中添加 CNAME 文件，添加域名 blog.xmdreamsky.com
+    #上传到git
+</pre></div>
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'muyifc'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'da-jian-bo-ke-huan-jing';
+                var disqus_url = '/da-jian-bo-ke-huan-jing.html';
+
+            var disqus_config = function () {
+                this.language = "zh_cn";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+
+            <li class="list-group-item"><a href="/"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Categories</span></h4></a>
+                <ul class="list-group" id="categories">
+                    <li class="list-group-item">
+                        <a href="/category/python.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Python
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/python.html">
+                            Python
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/publishing.html">
+                            Publishing
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/pelican.html">
+                            Pelican
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 MuYiFC
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>              <p><small>  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="//i.creativecommons.org/l/by/4.0/80x15.png" /></a>
+    Content
+  licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>, except where indicated otherwise.
+</small></p>
+         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+    <script src="/theme/js/bodypadding.js"></script>
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'muyifc'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+
+</body>
+</html>
