@@ -208,12 +208,25 @@
 
 <p>后续push该目录内的内容即可
 访问<a href="http://muyifc.github.io/blog">项目地址</a>可以在该git项目Settings/GitHub Pages中找到</p>
+<h3>变更github的域名</h3>
+<p>域名解析设置，该记录值去<a href="https://help.github.com/articles/tips-for-configuring-an-a-record-with-your-dns-provider/">官网帮助页</a>查找</p>
+<div class="highlight"><pre>    # 添加两个A记录
+    @ A 192.30.252.153
+    @ A 192.30.252.154
+    # 一个CNAME
+    blog CNAME muyifc.github.io.
+    # 在 output 文件夹中添加 CNAME 文件，添加域名 blog.xmdreamsky.com
+    # 上传到git
+    # git的库名不需要 &lt;git账号&gt;.github.io，直接随意设定一个就可以，如 blog
+</pre></div>
+
+
 <h3>变更主题</h3>
 <div class="highlight"><pre>    <span class="c">#该地址会下载一大部分主题</span>
     git clone https://github.com/getpelican/pelican-themes.git
     <span class="c">#加载主题，该命令将指定的主题复制到虚拟库中 /venv/lib/python3.5/site-packages/pelican/themes/&lt;themename&gt;</span>
     pelican-themes -i pelican-themes/&lt;themename&gt;
-    <span class="c">#修改pelicanconf.py，添加 THEME = &#39;&lt;themename&gt;&#39;，重新生成即可生效</span>
+    <span class="c"># 修改pelicanconf.py，添加 THEME = &#39;&lt;themename&gt;&#39;，重新生成即可生效</span>
     <span class="c">#如果要修改主题，需修改 pelican-themes/&lt;themename&gt;/templates 中的对应模板文件，再刷新模板</span>
     pelican-themes -U pelican-themes/&lt;themename&gt;
     <span class="c">#删除主题</span>
@@ -230,12 +243,6 @@
 <h3>CC</h3>
 <div class="highlight"><pre>    <span class="c">#添加CC</span>
     <span class="n">CC_LICENSE</span> <span class="o">=</span> <span class="s">&#39;CC-BY&#39;</span>
-</pre></div>
-
-
-<h3>变更github的域名</h3>
-<div class="highlight"><pre>    #在 output 文件夹中添加 CNAME 文件，添加域名 blog.xmdreamsky.com
-    #上传到git
 </pre></div>
             </div>
             <!-- /.entry-content -->
@@ -357,6 +364,6 @@
         }());
     </script>
     <!-- End Disqus Code -->
-
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256964390'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1256964390' type='text/javascript'%3E%3C/script%3E"));</script>
 </body>
 </html>
