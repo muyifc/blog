@@ -13,13 +13,13 @@
 
         <meta name="author" content="MuYiFC" />
         <meta name="keywords" content="Unity3d,NGUI" />
-        <meta name="description" content="转换鼠标点击坐标到NGUI本地坐标" />
+        <meta name="description" content="转换鼠标点击坐标到NGUI本地坐标，并判断该点击是否在指定的UI范围内" />
 
         <meta property="og:site_name" content="听说读写" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="转换鼠标点击坐标到NGUI本地坐标"/>
         <meta property="og:url" content="/zhuan-huan-shu-biao-dian-ji-zuo-biao-dao-nguiben-di-zuo-biao.html"/>
-        <meta property="og:description" content="转换鼠标点击坐标到NGUI本地坐标"/>
+        <meta property="og:description" content="转换鼠标点击坐标到NGUI本地坐标，并判断该点击是否在指定的UI范围内"/>
         <meta property="article:published_time" content="2016-01-04" />
             <meta property="article:section" content="Unity3d" />
             <meta property="article:tag" content="Unity3d" />
@@ -126,8 +126,11 @@
         <span class="n">pos</span> <span class="o">=</span> <span class="n">camera</span><span class="p">:</span><span class="n">ScreenToWorldPoint</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
         <span class="n">pos</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">parentTransform</span><span class="p">:</span><span class="n">InverseTransformPoint</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">pos</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="kd">local</span> <span class="n">bound</span> <span class="o">=</span> <span class="n">NGUIMath</span><span class="p">.</span><span class="n">CalculateRelativeWidgetBounds</span><span class="p">(</span><span class="n">parentTransform</span><span class="p">,</span><span class="n">transform</span><span class="p">,</span><span class="kc">true</span><span class="p">,</span><span class="kc">true</span><span class="p">)</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="n">bound</span><span class="p">:</span><span class="n">Contains</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="c1">-- 使用 bound.Contains(pos) 都是返回false有点奇怪，替换成直接判断</span>
+        <span class="kd">local</span> <span class="n">isContains</span> <span class="o">=</span> <span class="n">pos</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">bound</span><span class="p">.</span><span class="n">min</span><span class="p">.</span><span class="n">x</span> <span class="ow">and</span> <span class="n">pos</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">bound</span><span class="p">.</span><span class="n">max</span><span class="p">.</span><span class="n">x</span> <span class="ow">and</span> <span class="n">pos</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="n">bound</span><span class="p">.</span><span class="n">min</span><span class="p">.</span><span class="n">y</span> <span class="ow">and</span> <span class="n">pos</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="n">bound</span><span class="p">.</span><span class="n">max</span><span class="p">.</span><span class="n">x</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">isContains</span>
     <span class="k">end</span>
 </pre></div>
             </div>
@@ -191,18 +194,8 @@
             <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
                 <ul class="list-group " id="tags">
                     <li class="list-group-item tag-4">
-                        <a href="/tag/unity3d.html">
-                            Unity3d
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="/tag/pelican.html">
-                            Pelican
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="/tag/python.html">
-                            Python
+                        <a href="/tag/publishing.html">
+                            Publishing
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -211,8 +204,18 @@
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="/tag/publishing.html">
-                            Publishing
+                        <a href="/tag/unity3d.html">
+                            Unity3d
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/python.html">
+                            Python
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/pelican.html">
+                            Pelican
                         </a>
                     </li>
                 </ul>
