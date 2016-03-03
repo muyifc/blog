@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh_cn" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>匹配指定数值的多个物品选定 - 听说读写</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/pi-pei-zhi-ding-shu-zhi-de-duo-ge-wu-pin-xuan-ding.html">
+
+        <meta name="author" content="MuYiFC" />
+        <meta name="keywords" content="Unity3d" />
+        <meta name="description" content="给定多个物品，一个指定分数，选择小于指定分数的物品组合" />
+
+        <meta property="og:site_name" content="听说读写" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="匹配指定数值的多个物品选定"/>
+        <meta property="og:url" content="/pi-pei-zhi-ding-shu-zhi-de-duo-ge-wu-pin-xuan-ding.html"/>
+        <meta property="og:description" content="给定多个物品，一个指定分数，选择小于指定分数的物品组合"/>
+        <meta property="article:published_time" content="2016-03-02" />
+            <meta property="article:section" content="Unity3d" />
+            <meta property="article:tag" content="Unity3d" />
+            <meta property="article:author" content="MuYiFC" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/friendly.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+听说读写            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li >
+                            <a href="/category/du-shu-bi-ji.html">读书笔记</a>
+                        </li>
+                        <li >
+                            <a href="/category/python.html">Python</a>
+                        </li>
+                        <li class="active">
+                            <a href="/category/unity3d.html">Unity3d</a>
+                        </li>
+                        <li >
+                            <a href="/category/you-xi-she-ji.html">游戏设计</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<style>
+	#banner{
+	    background-image:url("/theme/images/banner.jpg");
+	}
+</style>
+
+<div id="banner">
+	<div class="container">
+		<!-- <div class="copy">
+			<h1>听说读写</h1>
+		</div> -->
+	</div>
+</div><!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/pi-pei-zhi-ding-shu-zhi-de-duo-ge-wu-pin-xuan-ding.html"
+                       rel="bookmark"
+                       title="Permalink to 匹配指定数值的多个物品选定">
+                        匹配指定数值的多个物品选定
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-03-02T21:55:00+08:00"> 2016-03-02(星期三) 21:55</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/unity3d.html">Unity3d</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>刚开始的思路主要是添加一个新物品后比较与之前的结果，并判断是否需要替换或添加新物品，而且没有将百分比的物品先
+分开，导致无论以什么方式计算，都没办法在只有固定值与兼容百分比后获取最优值
+因为目标格子数固定，将新物品填入目标格子，会导致新物品的替换有问题
+最后将百分比的物品先不管，计算只有固定值物品的最优解，然后计算有一个百分比的物品时的最优解，对比之前的结果做取舍</p>
+<div class="highlight"><pre><span class="c1">-- 计算自动添加培养道具</span>
+<span class="k">function</span> <span class="nf">HeroUpgradeTrainPanel</span><span class="p">:</span><span class="n">calcuteAutoAdd</span><span class="p">(</span><span class="n">items</span><span class="p">,</span><span class="n">target</span><span class="p">)</span>
+    <span class="c1">-- 分类 定值 与 百分比</span>
+    <span class="kd">local</span> <span class="n">constants</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="kd">local</span> <span class="n">percents</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">items</span> <span class="k">do</span>
+        <span class="k">if</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ExpType</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">then</span>
+            <span class="n">constants</span><span class="p">[</span><span class="o">#</span><span class="n">constants</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span>
+            <span class="n">percents</span><span class="p">[</span><span class="o">#</span><span class="n">percents</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c1">-- 计算固定值的最优解</span>
+    <span class="kd">local</span> <span class="n">last</span> <span class="o">=</span> <span class="n">self</span><span class="p">:</span><span class="n">calculateConstants</span><span class="p">(</span><span class="n">constants</span><span class="p">,</span><span class="n">target</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">self</span><span class="p">:</span><span class="n">saveTempNum</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+    <span class="c1">-- 计算有百分比时的最优解</span>
+    <span class="k">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">percents</span> <span class="k">do</span>
+        <span class="kd">local</span> <span class="n">pTarget</span> <span class="o">=</span> <span class="nb">tonumber</span><span class="p">(</span><span class="n">target</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">percents</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">Exp</span><span class="p">))</span>
+        <span class="c1">-- 去除该百分比后的目标值的最优解</span>
+        <span class="kd">local</span> <span class="n">l</span> <span class="o">=</span> <span class="n">self</span><span class="p">:</span><span class="n">calculateConstants</span><span class="p">(</span><span class="n">constants</span><span class="p">,</span><span class="n">pTarget</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+        <span class="kd">local</span> <span class="n">futureTotal</span> <span class="o">=</span> <span class="nb">math.ceil</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">total</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">percents</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">Exp</span><span class="p">))</span>
+        <span class="kd">local</span> <span class="n">lastTotal</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">total</span>
+        <span class="k">if</span> <span class="n">last</span><span class="p">.</span><span class="n">percent</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="k">then</span>
+            <span class="n">lastTotal</span> <span class="o">=</span> <span class="nb">math.ceil</span><span class="p">(</span><span class="n">last</span><span class="p">.</span><span class="n">total</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">last</span><span class="p">.</span><span class="n">percent</span><span class="p">.</span><span class="n">Exp</span><span class="p">))</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">futureTotal</span> <span class="o">&gt;</span> <span class="n">lastTotal</span> <span class="k">then</span>
+            <span class="n">l</span><span class="p">.</span><span class="n">percent</span> <span class="o">=</span> <span class="n">percents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">l</span><span class="p">.</span><span class="n">percent</span><span class="p">.</span><span class="n">TempNum</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">last</span> <span class="o">=</span> <span class="n">l</span>
+            <span class="n">self</span><span class="p">:</span><span class="n">saveTempNum</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="n">self</span><span class="p">:</span><span class="n">resetTempNum</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="n">self</span><span class="p">:</span><span class="n">loadTempNum</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+
+    <span class="c1">-- 处理数据</span>
+    <span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="n">data</span> <span class="o">=</span> <span class="p">{}}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">last</span><span class="p">.</span><span class="n">constants</span> <span class="k">do</span>
+        <span class="k">for</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">last</span><span class="p">.</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">TempNum</span> <span class="k">do</span>
+            <span class="n">obj</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="o">#</span><span class="n">obj</span><span class="p">.</span><span class="n">data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">end</span>
+        <span class="n">last</span><span class="p">.</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">UseNum</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">TempNum</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="n">last</span><span class="p">.</span><span class="n">percent</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="k">then</span>
+        <span class="n">obj</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="o">#</span><span class="n">obj</span><span class="p">.</span><span class="n">data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">percent</span>
+        <span class="n">last</span><span class="p">.</span><span class="n">percent</span><span class="p">.</span><span class="n">UseNum</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">percent</span><span class="p">.</span><span class="n">TempNum</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="o">#</span><span class="n">obj</span><span class="p">.</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">then</span>
+        <span class="n">GameData</span><span class="p">.</span><span class="n">ToolTip</span><span class="p">:</span><span class="n">setTip</span><span class="p">(</span><span class="s2">&quot;</span><span class="s">请获取更多训练物品&quot;</span><span class="p">,</span><span class="n">GameData</span><span class="p">.</span><span class="n">Tip</span><span class="p">.</span><span class="n">Failed</span><span class="p">)</span>
+    <span class="k">else</span>
+        <span class="n">CustomNotification</span><span class="p">:</span><span class="n">excuteNotification</span><span class="p">(</span><span class="s2">&quot;</span><span class="s">Hero.UpgradeTrainPanel&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="s">addTrainItems&quot;</span><span class="p">,</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">-- 临时保持记录的数量</span>
+<span class="k">function</span> <span class="nf">HeroUpgradeTrainPanel</span><span class="p">:</span><span class="n">saveTempNum</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">last</span><span class="p">.</span><span class="n">constants</span> <span class="k">do</span>
+        <span class="n">last</span><span class="p">.</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">TempNumC</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">TempNum</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="n">last</span><span class="p">.</span><span class="n">percent</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="k">then</span>
+        <span class="n">last</span><span class="p">.</span><span class="n">percent</span><span class="p">.</span><span class="n">TempNumC</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">percent</span><span class="p">.</span><span class="n">TempNum</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">-- 获取保存的临时数据</span>
+<span class="k">function</span> <span class="nf">HeroUpgradeTrainPanel</span><span class="p">:</span><span class="n">loadTempNum</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">last</span><span class="p">.</span><span class="n">constants</span> <span class="k">do</span>
+        <span class="n">last</span><span class="p">.</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">TempNum</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">TempNumC</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="n">last</span><span class="p">.</span><span class="n">percent</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="k">then</span>
+        <span class="n">last</span><span class="p">.</span><span class="n">percent</span><span class="p">.</span><span class="n">TempNum</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">percent</span><span class="p">.</span><span class="n">TempNumC</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">-- 重置数据</span>
+<span class="k">function</span> <span class="nf">HeroUpgradeTrainPanel</span><span class="p">:</span><span class="n">resetTempNum</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">items</span> <span class="k">do</span>
+        <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">TempNum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">-- 计算固定值的最优解</span>
+<span class="k">function</span> <span class="nf">HeroUpgradeTrainPanel</span><span class="p">:</span><span class="n">calculateConstants</span><span class="p">(</span><span class="n">constants</span><span class="p">,</span><span class="n">target</span><span class="p">,</span><span class="n">leftNum</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">last</span> <span class="o">=</span> <span class="p">{</span><span class="n">total</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">constants</span><span class="o">=</span><span class="p">{},</span><span class="n">percent</span><span class="o">=</span><span class="kc">nil</span><span class="p">,</span><span class="n">leftNum</span><span class="o">=</span><span class="n">leftNum</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">constants</span> <span class="k">do</span>
+        <span class="kd">local</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">Exp</span>
+        <span class="kd">local</span> <span class="n">futureTotal</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1">-- 计算固定</span>
+        <span class="kd">local</span> <span class="n">num</span> <span class="o">=</span> <span class="nb">math.min</span><span class="p">(</span><span class="nb">math.floor</span><span class="p">((</span><span class="n">target</span> <span class="o">-</span> <span class="n">last</span><span class="p">.</span><span class="n">total</span><span class="p">)</span> <span class="o">/</span> <span class="n">exp</span><span class="p">),</span><span class="n">last</span><span class="p">.</span><span class="n">leftNum</span><span class="p">,</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">Number</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">then</span>
+            <span class="n">futureTotal</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">total</span> <span class="o">+</span> <span class="n">exp</span> <span class="o">*</span> <span class="n">num</span>
+            <span class="k">if</span> <span class="n">futureTotal</span> <span class="o">&lt;=</span> <span class="n">target</span> <span class="ow">and</span> <span class="nb">math.abs</span><span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">futureTotal</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">math.abs</span><span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">last</span><span class="p">.</span><span class="n">total</span><span class="p">)</span> <span class="k">then</span>
+                <span class="n">last</span><span class="p">.</span><span class="n">total</span> <span class="o">=</span> <span class="n">futureTotal</span>
+                <span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">TempNum</span> <span class="o">=</span> <span class="n">num</span>
+                <span class="nb">table.insert</span><span class="p">(</span><span class="n">last</span><span class="p">.</span><span class="n">constants</span><span class="p">,</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">last</span><span class="p">.</span><span class="n">leftNum</span> <span class="o">=</span> <span class="n">last</span><span class="p">.</span><span class="n">leftNum</span> <span class="o">-</span> <span class="n">num</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+
+        <span class="c1">-- 替换计算</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">math.min</span><span class="p">(</span><span class="nb">math.floor</span><span class="p">(</span><span class="n">target</span><span class="o">/</span><span class="n">exp</span><span class="p">),</span><span class="n">leftNum</span><span class="p">,</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">Number</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">then</span>
+            <span class="n">futureTotal</span> <span class="o">=</span> <span class="n">exp</span> <span class="o">*</span> <span class="n">num</span>
+            <span class="k">if</span> <span class="n">futureTotal</span> <span class="o">&lt;=</span> <span class="n">target</span> <span class="ow">and</span> <span class="nb">math.abs</span><span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">futureTotal</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">math.abs</span><span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">last</span><span class="p">.</span><span class="n">total</span><span class="p">)</span> <span class="k">then</span>
+                <span class="n">last</span><span class="p">.</span><span class="n">total</span> <span class="o">=</span> <span class="n">futureTotal</span>
+                <span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">TempNum</span> <span class="o">=</span> <span class="n">num</span>
+                <span class="n">last</span><span class="p">.</span><span class="n">constants</span> <span class="o">=</span> <span class="p">{</span><span class="n">constants</span><span class="p">[</span><span class="n">i</span><span class="p">]}</span>
+                <span class="n">last</span><span class="p">.</span><span class="n">leftNum</span> <span class="o">=</span> <span class="n">leftNum</span> <span class="o">-</span> <span class="n">num</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">last</span>
+<span class="k">end</span>
+</pre></div>
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'muyifc'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'pi-pei-zhi-ding-shu-zhi-de-duo-ge-wu-pin-xuan-ding';
+                var disqus_url = '/pi-pei-zhi-ding-shu-zhi-de-duo-ge-wu-pin-xuan-ding.html';
+
+            var disqus_config = function () {
+                this.language = "zh_cn";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+
+            <li class="list-group-item"><a href="/"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Categories</span></h4></a>
+                <ul class="list-group" id="categories">
+                    <li class="list-group-item">
+                        <a href="/category/du-shu-bi-ji.html">
+                            <i class="fa fa-folder-open fa-lg"></i> 读书笔记
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="/category/python.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Python
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="/category/unity3d.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Unity3d
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="/category/you-xi-she-ji.html">
+                            <i class="fa fa-folder-open fa-lg"></i> 游戏设计
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                    <li class="list-group-item tag-1">
+                        <a href="/tag/unity3d.html">
+                            Unity3d
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/fan-yi.html">
+                            翻译
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/publishing.html">
+                            Publishing
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/you-xi-she-ji.html">
+                            游戏设计
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/jing-tong-zheng-ze-biao-da-shi.html">
+                            精通正则表达式
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/python.html">
+                            Python
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/pelican.html">
+                            Pelican
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/ngui.html">
+                            NGUI
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2016 MuYiFC
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>
+<!-- cnzz站长统计插件 -->
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256964390'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1256964390%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>              <p><small>  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="//i.creativecommons.org/l/by/4.0/80x15.png" /></a>
+    Content
+  licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>, except where indicated otherwise.
+</small></p>
+         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+    <script src="/theme/js/bodypadding.js"></script>
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'muyifc'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+
+</body>
+</html>
