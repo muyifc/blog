@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="zh_cn" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>提取网页中的表格数据 - 听说读写</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/ti-qu-wang-ye-zhong-de-biao-ge-shu-ju.html">
+
+        <meta name="author" content="MuYiFC" />
+        <meta name="keywords" content="Python" />
+        <meta name="description" content="选取网页中固定格式的表格，提取有用的信息重新排版" />
+
+        <meta property="og:site_name" content="听说读写" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="提取网页中的表格数据"/>
+        <meta property="og:url" content="/ti-qu-wang-ye-zhong-de-biao-ge-shu-ju.html"/>
+        <meta property="og:description" content="选取网页中固定格式的表格，提取有用的信息重新排版"/>
+        <meta property="article:published_time" content="2016-09-25" />
+            <meta property="article:section" content="Python" />
+            <meta property="article:tag" content="Python" />
+            <meta property="article:author" content="MuYiFC" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/friendly.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+听说读写            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li >
+                            <a href="/category/du-shu-bi-ji.html">读书笔记</a>
+                        </li>
+                        <li >
+                            <a href="/category/photoshop.html">Photoshop</a>
+                        </li>
+                        <li class="active">
+                            <a href="/category/python.html">Python</a>
+                        </li>
+                        <li >
+                            <a href="/category/unity3d.html">Unity3d</a>
+                        </li>
+                        <li >
+                            <a href="/category/you-xi-she-ji.html">游戏设计</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<style>
+	#banner{
+	    background-image:url("/theme/images/banner.jpg");
+	}
+</style>
+
+<div id="banner">
+	<div class="container">
+		<!-- <div class="copy">
+			<h1>听说读写</h1>
+		</div> -->
+	</div>
+</div><!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/ti-qu-wang-ye-zhong-de-biao-ge-shu-ju.html"
+                       rel="bookmark"
+                       title="Permalink to 提取网页中的表格数据">
+                        提取网页中的表格数据
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-09-25T13:42:00+08:00"> 2016-09-25(星期日) 13:42</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/python.html">Python</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>page数据<a href="http://www.chuguo.cn/common/gj.htm">来源</a></p>
+<div class="highlight"><pre>    <span class="kn">from</span> <span class="nn">html.parser</span> <span class="kn">import</span> <span class="n">HTMLParser</span>
+
+    <span class="n">page</span> <span class="o">=</span> <span class="s">&#39;&#39;&#39;</span>
+<span class="s">            &lt;table&gt;        </span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Angola&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;安哥拉&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;244&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Afghanistan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;阿富汗&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AF&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;93&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Albania&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;阿尔巴尼亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AL&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;355&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Algeria&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;阿尔及利亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;DZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;213&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Andorra&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;安道尔共和国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AD&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;376&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Anguilla&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;安圭拉岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AI&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1264&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Antigua and Barbuda&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;安提瓜和巴布达&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1268&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Argentina&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;阿根廷&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;54&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-11&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Armenia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;亚美尼亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;374&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Ascension&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;阿森松&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;&amp;nbsp;&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;247&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Australia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;澳大利亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AU&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;61&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+2&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Austria&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;奥地利&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AT&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;43&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Azerbaijan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;阿塞拜疆&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;994&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Bahamas&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;巴哈马&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BS&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1242&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Bahrain&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;巴林&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BH&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;973&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Bangladesh&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;孟加拉国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BD&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;880&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-2&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Barbados&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;巴巴多斯&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BB&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1246&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Belarus&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;白俄罗斯&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BY&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;375&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Belgium&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;比利时&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;32&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Belize&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;伯利兹&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;501&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-14&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Benin&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;贝宁&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BJ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;229&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Bermuda Is.&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;百慕大群岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1441&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Bolivia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;玻利维亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;591&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Botswana&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;博茨瓦纳&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BW&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;267&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Brazil&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;巴西&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;55&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-11&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Brunei&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;文莱&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BN&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;673&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Bulgaria&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;保加利亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;359&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Burkina-faso&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;布基纳法索&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BF&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;226&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Burma&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;缅甸&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;95&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-1.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Burundi&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;布隆迪&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;BI&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;257&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Cameroon&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;喀麦隆&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;237&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Canada&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;加拿大&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Cayman Is.&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;开曼群岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;&amp;nbsp;&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1345&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Central African Republic&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;中非共和国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CF&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;236&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Chad&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;乍得&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TD&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;235&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Chile&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;智利&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CL&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;56&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;China&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;中国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CN&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;86&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Colombia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;哥伦比亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;57&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Congo&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;刚果&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;242&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Cook Is.&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;库克群岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CK&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;682&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-18.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Costa Rica&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;哥斯达黎加&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;506&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-14&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Cuba&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;古巴&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CU&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;53&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Cyprus&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;塞浦路斯&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CY&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;357&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Czech Republic &lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;捷克&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;420&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Denmark&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;丹麦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;DK&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;45&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Djibouti&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;吉布提&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;DJ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;253&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Dominica Rep.&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;多米尼加共和国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;DO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1890&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Ecuador&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;厄瓜多尔&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;EC&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;593&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Egypt&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;埃及&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;EG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;20&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;EI Salvador&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;萨尔瓦多&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SV&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;503&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-14&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td height=&quot;17&quot; width=&quot;27%&quot;&gt;Estonia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;17&quot; width=&quot;24%&quot;&gt;爱沙尼亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;17&quot; width=&quot;20%&quot;&gt;EE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;17&quot; width=&quot;15%&quot;&gt;372&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;17&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Ethiopia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;埃塞俄比亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;ET&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;251&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Fiji&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;斐济&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;FJ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;679&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+4&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Finland&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;芬兰&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;FI&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;358&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;France&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;法国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;FR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;33&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;French Guiana&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;法属圭亚那&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GF&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;594&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Gabon&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;加蓬&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;241&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Gambia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;冈比亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;220&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Georgia &lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;格鲁吉亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;995&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Germany &lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;德国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;DE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;49&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Ghana&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;加纳&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GH&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;233&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Gibraltar&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;直布罗陀&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GI&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;350&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Greece&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;希腊&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;30&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Grenada&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;格林纳达&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GD&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1809&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-14&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Guam&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;关岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GU&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1671&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+2&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Guatemala&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;危地马拉&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GT&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;502&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-14&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Guinea&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;几内亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GN&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;224&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Guyana&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;圭亚那&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GY&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;592&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-11&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Haiti&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;海地&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;HT&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;509&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Honduras&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;洪都拉斯&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;HN&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;504&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-14&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Hongkong&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;香港&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;HK&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;852&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Hungary&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;匈牙利&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;HU&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;36&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Iceland&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;冰岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;IS&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;354&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-9&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;India&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;印度&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;IN&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;91&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-2.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Indonesia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;印度尼西亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;ID&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;62&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-0.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Iran&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;伊朗&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;IR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;98&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-4.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Iraq&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;伊拉克&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;IQ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;964&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Ireland&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;爱尔兰&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;IE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;353&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-4.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Israel&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;以色列&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;IL&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;972&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Italy&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;意大利&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;IT&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;39&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Ivory Coast&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;科特迪瓦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;&amp;nbsp;&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;225&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Jamaica&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;牙买加&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;JM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1876&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Japan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;日本&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;JP&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;81&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+1&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Jordan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;约旦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;JO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;962&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Kampuchea (Cambodia )&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;柬埔寨&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;KH&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;855&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-1&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Kazakstan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;哈萨克斯坦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;KZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;327&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Kenya&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;肯尼亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;KE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;254&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Korea&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;韩国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;KR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;82&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+1&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Kuwait&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;科威特&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;KW&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;965&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Kyrgyzstan &lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;吉尔吉斯坦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;KG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;331&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Laos&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;老挝&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;856&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-1&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Latvia &lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;拉脱维亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LV&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;371&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Lebanon&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;黎巴嫩&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LB&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;961&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Lesotho&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;莱索托&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LS&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;266&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Liberia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;利比里亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;231&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Libya&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;利比亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LY&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;218&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Liechtenstein&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;列支敦士登&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LI&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;423&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Lithuania&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;立陶宛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LT&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;370&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Luxembourg&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;卢森堡&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LU&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;352&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Macao&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;澳门&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;853&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Madagascar&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;马达加斯加&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;261&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Malawi&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;马拉维&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MW&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;265&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Malaysia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;马来西亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MY&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;60&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-0.5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Maldives&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;马尔代夫&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MV&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;960&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Mali&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;马里&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;ML&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;223&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Malta&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;马耳他&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MT&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;356&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Mariana Is&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;马里亚那群岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;&amp;nbsp;&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1670&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+1&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Martinique&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;马提尼克&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;&amp;nbsp;&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;596&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Mauritius&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;毛里求斯&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MU&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;230&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-4&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Mexico&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;墨西哥&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MX&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;52&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-15&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Moldova, Republic of &lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;摩尔多瓦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MD&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;373&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Monaco&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;摩纳哥&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MC&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;377&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Mongolia &lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;蒙古&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MN&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;976&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Montserrat Is&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;蒙特塞拉特岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MS&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1664&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Morocco&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;摩洛哥&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;212&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Mozambique&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;莫桑比克&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;MZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;258&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Namibia &lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;纳米比亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;NA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;264&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Nauru&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;瑙鲁&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;NR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;674&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+4&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Nepal&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;尼泊尔&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;NP&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;977&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-2.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Netheriands Antilles&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;荷属安的列斯&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;&amp;nbsp;&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;599&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Netherlands&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;荷兰&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;NL&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;31&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;New Zealand&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;新西兰&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;NZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;64&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+4&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Nicaragua&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;尼加拉瓜&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;NI&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;505&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-14&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Niger&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;尼日尔&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;NE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;227&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Nigeria&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;尼日利亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;NG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;234&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;North Korea&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;朝鲜&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;KP&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;850&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+1&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Norway&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;挪威&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;NO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;47&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Oman&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;阿曼&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;OM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;968&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-4&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Pakistan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;巴基斯坦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PK&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;92&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-2.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Panama&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;巴拿马&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;507&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Papua New Cuinea&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;巴布亚新几内亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;675&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+2&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Paraguay&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;巴拉圭&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PY&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;595&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Peru&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;秘鲁&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;51&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Philippines&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;菲律宾&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PH&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;63&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Poland&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;波兰&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PL&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;48&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;French Polynesia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;法属玻利尼西亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PF&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;689&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Portugal&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;葡萄牙&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PT&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;351&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Puerto Rico&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;波多黎各&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;PR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1787&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Qatar&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;卡塔尔&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;QA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;974&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Reunion&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;留尼旺&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;&amp;nbsp;&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;262&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-4&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Romania&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;罗马尼亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;RO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;40&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Russia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;俄罗斯&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;RU&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;7&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Saint Lueia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;圣卢西亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LC&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1758&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Saint Vincent&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;圣文森特岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;VC&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1784&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Samoa Eastern&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;东萨摩亚(美)&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;&amp;nbsp;&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;684&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-19&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Samoa Western&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;西萨摩亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;&amp;nbsp;&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;685&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-19&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;San Marino&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;圣马力诺&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;378&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Sao Tome and Principe&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;圣多美和普林西比&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;ST&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;239&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Saudi Arabia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;沙特阿拉伯&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;966&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Senegal&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;塞内加尔&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SN&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;221&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Seychelles&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;塞舌尔&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SC&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;248&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-4&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Sierra Leone&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;塞拉利昂&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SL&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;232&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Singapore&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;新加坡&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;65&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+0.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Slovakia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;斯洛伐克&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SK&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;421&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Slovenia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;斯洛文尼亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SI&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;386&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td height=&quot;18&quot; width=&quot;27%&quot;&gt;Solomon Is&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;18&quot; width=&quot;24%&quot;&gt;所罗门群岛&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;18&quot; width=&quot;20%&quot;&gt;SB&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;18&quot; width=&quot;15%&quot;&gt;677&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;18&quot; width=&quot;14%&quot;&gt;+3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Somali&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;索马里&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;252&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;South Africa&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;南非&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;ZA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;27&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Spain&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;西班牙&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;ES&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;34&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Sri Lanka&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;斯里兰卡&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LK&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;94&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;St.Lucia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;圣卢西亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;LC&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1758&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;St.Vincent&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;圣文森特&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;VC&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1784&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Sudan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;苏丹&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SD&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;249&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Suriname&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;苏里南&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;597&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-11.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Swaziland&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;斯威士兰&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;268&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Sweden&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;瑞典&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;46&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Switzerland&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;瑞士&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;CH&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;41&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Syria&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;叙利亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;SY&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;963&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Taiwan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;台湾省&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TW&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;886&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;0&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Tajikstan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;塔吉克斯坦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TJ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;992&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Tanzania&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;坦桑尼亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;255&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Thailand&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;泰国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TH&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;66&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-1&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Togo&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;多哥&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;228&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Tonga&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;汤加&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TO&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;676&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;+4&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Trinidad and Tobago&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;特立尼达和多巴哥&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TT&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1809&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Tunisia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;突尼斯&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TN&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;216&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Turkey&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;土耳其&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;90&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Turkmenistan &lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;土库曼斯坦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;TM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;993&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Uganda&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;乌干达&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;UG&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;256&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Ukraine&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;乌克兰&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;UA&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;380&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;United Arab Emirates&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;阿拉伯联合酋长国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;AE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;971&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-4&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;United Kiongdom&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;英国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;GB&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;44&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-8&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;United States of America&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;美国&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;US&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;1&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-13&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Uruguay&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;乌拉圭&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;UY&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;598&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-10.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Uzbekistan&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;乌兹别克斯坦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;UZ&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;233&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Venezuela&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;委内瑞拉&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;VE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;58&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-12.3&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Vietnam&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;越南&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;VN&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;84&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-1&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td height=&quot;19&quot; width=&quot;27%&quot;&gt;Yemen&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;19&quot; width=&quot;24%&quot;&gt;也门&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;19&quot; width=&quot;20%&quot;&gt;YE&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;19&quot; width=&quot;15%&quot;&gt;967&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; height=&quot;19&quot; width=&quot;14%&quot;&gt;-5&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Yugoslavia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;南斯拉夫&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;YU&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;381&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Zimbabwe&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;津巴布韦&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;ZW&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;263&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Zaire&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;扎伊尔&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;ZR&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;243&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-7&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;tr&gt;</span>
+<span class="s">            &lt;td width=&quot;27%&quot;&gt;Zambia&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;24%&quot;&gt;赞比亚&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;20%&quot;&gt;ZM&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;15%&quot;&gt;260&lt;/td&gt;</span>
+<span class="s">            &lt;td align=&quot;middle&quot; width=&quot;14%&quot;&gt;-6&lt;/td&gt;</span>
+<span class="s">            &lt;/tr&gt;</span>
+<span class="s">            &lt;/table&gt;</span>
+<span class="s">            &#39;&#39;&#39;</span>
+    <span class="c"># print(page)</span>
+
+    <span class="k">class</span> <span class="nc">hp</span><span class="p">(</span><span class="n">HTMLParser</span><span class="p">):</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">isTr</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">isTd</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">tdCount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">def</span> <span class="nf">handle_starttag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tag</span><span class="p">,</span><span class="n">attr</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;tr&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">isTr</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tdCount</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">first</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s">&quot;td&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">isTd</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tdCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="c"># print(&quot;start&quot;,tag,attr)</span>
+        <span class="k">def</span> <span class="nf">handle_endtag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tag</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s">&quot;tr&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">isTr</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">txt</span> <span class="o">+=</span> <span class="s">&#39;},</span><span class="se">\n</span><span class="s">&#39;</span>
+            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s">&quot;td&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">isTd</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="c"># print(&quot;end&quot;,tag)</span>
+        <span class="k">def</span> <span class="nf">handle_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+            <span class="c"># print(data)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTr</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTd</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tdCount</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">tdCount</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">tdCount</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">first</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">txt</span> <span class="o">+=</span> <span class="s">&quot;{sign=</span><span class="se">\&quot;</span><span class="s">&quot;</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">&quot;</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">first</span> <span class="o">=</span> <span class="bp">False</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tdCount</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">txt</span> <span class="o">+=</span> <span class="s">&quot;,name=</span><span class="se">\&quot;</span><span class="s">&quot;</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tdCount</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">txt</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">,code=&quot;</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">txt</span> <span class="o">+=</span> <span class="n">data</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">hp</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">txt</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">,</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
+    <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">,</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+</pre></div>
+
+
+<p>handle_startendtag 处理开始标签和结束标签
+handle_starttag 处理开始标签，比如<xx>
+handle_endtag 处理结束标签，比如</xx>
+handle_charref 处理特殊字符串，就是以&amp;#开头的，一般是内码表示的字符
+handle_entityref 处理一些特殊字符，以&amp;开头的，比如<br />
+handle_data 处理数据，就是<xx>data</xx>中间的那些数据
+handle_comment 处理注释
+handle_decl 处理\&lt;!开头的，比如&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+handle_pi 处理形如&lt;?instruction&gt;的东西</p>
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'muyifc'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'ti-qu-wang-ye-zhong-de-biao-ge-shu-ju';
+                var disqus_url = '/ti-qu-wang-ye-zhong-de-biao-ge-shu-ju.html';
+
+            var disqus_config = function () {
+                this.language = "zh_cn";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+
+            <li class="list-group-item"><a href="/"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Categories</span></h4></a>
+                <ul class="list-group" id="categories">
+                    <li class="list-group-item">
+                        <a href="/category/du-shu-bi-ji.html">
+                            <i class="fa fa-folder-open fa-lg"></i> 读书笔记
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="/category/photoshop.html">
+                            <i class="fa fa-folder-open fa-lg"></i> PhotoShop
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="/category/python.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Python
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="/category/unity3d.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Unity3d
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="/category/you-xi-she-ji.html">
+                            <i class="fa fa-folder-open fa-lg"></i> 游戏设计
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                    <li class="list-group-item tag-1">
+                        <a href="/tag/unity3d.html">
+                            Unity3d
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="/tag/python.html">
+                            Python
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/photoshop-script.html">
+                            PhotoShop Script
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/ngui.html">
+                            NGUI
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/you-xi-she-ji.html">
+                            游戏设计
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/fan-yi.html">
+                            翻译
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/publishing.html">
+                            Publishing
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/pelican.html">
+                            Pelican
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/photoshop.html">
+                            PhotoShop
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="/tag/jing-tong-zheng-ze-biao-da-shi.html">
+                            精通正则表达式
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2016 MuYiFC
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>
+<!-- cnzz站长统计插件 -->
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256964390'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1256964390%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>              <p><small>  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="//i.creativecommons.org/l/by/4.0/80x15.png" /></a>
+    Content
+  licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>, except where indicated otherwise.
+</small></p>
+         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+    <script src="/theme/js/bodypadding.js"></script>
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'muyifc'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+
+</body>
+</html>
